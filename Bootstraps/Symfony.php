@@ -3,6 +3,7 @@
 namespace PHPPM\Bootstraps;
 
 use Stack\Builder;
+use Symfony\Component\Debug\Debug;
 
 /**
  * A default bootstrap for the Symfony framework
@@ -32,8 +33,12 @@ class Symfony implements StackableBootstrapInterface
         }
 
         $this->includeAutoload();
-        
-        $app = new \AppKernel($this->appenv, $this->isDebug());
+
+        $debug = $this->isDebug();
+        if ($debug) {
+            Debug::enable();
+        }
+        $app = new \AppKernel($this->appenv, $debug);
         $app->loadClassCache();
 
         return $app;
