@@ -32,8 +32,8 @@ class Symfony implements StackableBootstrapInterface
         }
 
         $this->includeAutoload();
-
-        $app = new \AppKernel($this->appenv, false);
+        
+        $app = new \AppKernel($this->appenv, $this->isDebug());
         $app->loadClassCache();
 
         return $app;
@@ -63,5 +63,25 @@ class Symfony implements StackableBootstrapInterface
         if (is_file($symfonyAutoload)) {
             require_once $symfonyAutoload;
         }
+    }
+
+    /**
+     * Determines if the kernel should be started in debug mode.
+     *
+     * The environment variable SYMFONY_DEBUG is used to determine if the debug mode
+     * should be enabled.
+     * If the variable is not defined, then the configured environment is used to
+     * determine, if the debug mode should be enabled. Debug will be enabled, when
+     * the environment is defined as "dev". This is usually the default behavior,
+     * when using Symfony standard.
+     *
+     * @return bool
+     */
+    protected function isDebug()
+    {
+        if (($debug = getenv('SYMFONY_DEBUG')) !== false) {
+            return (bool)$debug;
+        }
+        return $this->appenv === 'dev';
     }
 }
